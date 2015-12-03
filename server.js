@@ -9,6 +9,30 @@ app.use(express.static(__dirname + '/public'));
 
 var clientInfo = {};
 
+function sendCurrentUsers(socket) {
+	var info = clientInfo[socket.id];
+	var users = [];
+
+	if (typeof info === 'undefined') return;
+
+	Object.keys(clientInfo).forEach(function(socketId) {
+		if (info.room === clientInfo[socketId].room) {
+			users.push(clientInfo[socketId].name);
+		}
+	});
+
+	socket.emit('message', announce('Current users: ' + users.join(', ')));
+};
+
+// returns system message object
+function announce(text) {
+	return {
+		name: 'System',
+		text: text,
+		timestamp: moment().valueOf()
+	}
+};
+
 io.on('connection', function(socket) {
 	console.log('User conntected via socket.io');
 
@@ -27,6 +51,7 @@ io.on('connection', function(socket) {
 
 	socket.on('joinRoom', function(req) {
 		clientInfo[socket.id] = req;
+
 		// socket.io handles joining functionality
 		socket.join(req.room);
 		socket.broadcast.to(req.room).emit('message', {
@@ -39,7 +64,13 @@ io.on('connection', function(socket) {
 	socket.on('message', function(message) {
 		console.log('Message received: ' + message.text );
 
-		io.to(clientInfo[socket.id].room).emit('message', message);
+		switch (message.text) {
+			 case '@currentUsers':
+				sendCurrentUsers(socket);
+				break;
+			default:
+				io.to(clientInfo[socket.id].room).emit('message', message);	
+		};
 	});
 
 	socket.emit('message', {
