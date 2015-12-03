@@ -1,11 +1,28 @@
 body {
 	background-color: #222222;
+	color: #dddddd;
 }
 
-.container {
-	background-color: #888;
+a {
+	text-decoration: none;
+	border: 1px solid #ddd;
+	color: #ddd;
+	padding: 0.5em;
 }
 
-.timestamp {
-	float: right;
+.time {
+	margin-left: 0.5em;
+}
+
+.time::before {
+	content: '- ';	
+}
+
+.name {
+	color: #aaaaaa;
+}
+
+.text {
+	margin: 0.5em 0 0.5em 0.3em;
+	color: #dddddd;
 }
