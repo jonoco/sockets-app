@@ -16,7 +16,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.emit('message', {
-		text: 'Welcome to the jungle'
+		text: 'Welcome to the room'
 	});
 });
 
